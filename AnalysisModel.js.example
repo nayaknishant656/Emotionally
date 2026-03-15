@@ -1,0 +1,60 @@
+const mongoose = require('mongoose');
+
+/**
+ * Analysis Schema
+ * Stores the compiled results of Gemini emotional analysis linked to a specific journal entry.
+ */
+const analysisSchema = new mongoose.Schema(
+    {
+        journalId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Journal',
+            required: true,
+            index: true
+        },
+        userId: {
+            type: String,
+            required: true,
+            trim: true,
+            index: true
+        },
+        journalText: {
+            type: String,
+            required: true
+        },
+        ambience: {
+            type: String,
+            trim: true
+        },
+        analysis: {
+            sentiment: {
+                type: String,
+                required: true
+            },
+            main_emotions: {
+                type: [String],
+                default: []
+            },
+            intensity: {
+                type: Number,
+                min: 0,
+                max: 10
+            },
+            brief_advice: {
+                type: String
+            },
+            summary: {
+                type: String
+            }
+        }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
+        collection: 'Analyses'
+    }
+);
+
+const Analysis = mongoose.model('Analysis', analysisSchema);
+
+module.exports = Analysis;
