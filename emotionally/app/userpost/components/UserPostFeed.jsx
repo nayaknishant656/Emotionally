@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import AnalysisDisplay from './AnalysisDisplay'
+import toast from 'react-hot-toast'
 
 export default function UserPostFeed() {
     const [journals, setJournals] = useState([])
@@ -30,20 +31,40 @@ export default function UserPostFeed() {
 
     const saveAnalysisToServer = async (journalId, userId, text, ambience, analysisResults) => {
         try {
-            await fetch('http://localhost:5001/api/v1/analyses', {
+            const payload = {
+                userId: userId,
+                journalId: journalId,
+                journalText: text,
+                ambience: ambience,
+                analysis: {
+                    sentiment: analysisResults.sentiment,
+                    main_emotions: analysisResults.main_emotions,
+                    intensity: analysisResults.intensity,
+                    brief_advice: analysisResults.brief_advice,
+                    analyzed_at: new Date().toISOString(),
+                    model_version: "v1.0"
+                },
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            const res = await fetch('http://localhost:5001/api/v1/journals/analysis', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    journalId,
-                    userId,
-                    journalText: text,
-                    ambience,
-                    analysis: analysisResults
-                })
+                body: JSON.stringify(payload)
             })
-            console.log(`Analysis for journal ${journalId} saved to server successfully.`)
+
+            if (res.ok) {
+                toast.success('successfully post to the backend')
+                console.log(`Analysis for journal ${journalId} saved to server successfully.`)
+            } else {
+                const errorData = await res.json().catch(() => ({}));
+                console.error('Failed to save analysis:', errorData);
+                toast.error('Failed to post to the backend')
+            }
         } catch (error) {
             console.error('Failed to save analysis to server:', error)
+            toast.error('Error connecting to the backend')
         }
     }
 
