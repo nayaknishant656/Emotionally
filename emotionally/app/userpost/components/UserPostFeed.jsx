@@ -10,7 +10,7 @@ export default function UserPostFeed() {
 
     const fetchJournals = async () => {
         try {
-            const res = await fetch('http://localhost:5001/api/v1/journals', { cache: 'no-store' })
+            const res = await fetch('https://emotionally-backend-rest-gemini.vercel.app/api/v1/journals', { cache: 'no-store' })
             if (!res.ok) throw new Error('Failed to fetch')
             const result = await res.json()
             // Assuming the API returns { status: 'success', data: [...] }
@@ -48,7 +48,7 @@ export default function UserPostFeed() {
                 updatedAt: new Date().toISOString()
             };
 
-            const res = await fetch('http://localhost:5001/api/v1/journals/analysis', {
+            const res = await fetch('https://emotionally-backend-rest-gemini.vercel.app/api/v1/journals/analysis', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -81,8 +81,8 @@ export default function UserPostFeed() {
                 const data = await res.json()
                 setAnalysisData(prev => ({ ...prev, [id]: data }))
 
-                // Automatically save the analysis to the server
-                await saveAnalysisToServer(id, userId, text, ambience, data)
+                // Automatically save the analysis to the server (Awaiting analysis, then finishing background save)
+                saveAnalysisToServer(id, userId, text, ambience, data)
             }
         } catch (error) {
             console.error('Analysis failed:', error)
@@ -129,7 +129,7 @@ export default function UserPostFeed() {
                                     <p className="text-[10px] text-gray-500 font-mono">ID: {userId}</p>
                                 </div>
                                 <button
-                                    onClick={() => handleAnalyze(_id, text, ambience, userId)}
+                                    onClick={async () => await handleAnalyze(_id, text, ambience, userId)}
                                     disabled={isAnalyzing}
                                     className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/20 border border-white/5 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50"
                                 >
