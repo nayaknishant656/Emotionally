@@ -18,7 +18,7 @@ export default function UserPost() {
         const randomId = generateRandomUserId()
 
         try {
-            const res = await fetch('http://localhost:5001/api/v1/journals', {
+            const res = await fetch('https://emotionally-backend-rest-gemini.vercel.app/api/v1/journals', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

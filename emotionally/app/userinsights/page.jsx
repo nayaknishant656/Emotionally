@@ -16,7 +16,7 @@ export default function UserInsights() {
         setSearched(true)
         try {
             // Updated API endpoint as per request
-            const res = await fetch(`http://localhost:5001/api/v1/journals/analysis/user/${searchId}`)
+            const res = await fetch(`https://emotionally-backend-rest-gemini.vercel.app/api/v1/journals/analysis/user/${searchId}`)
             if (!res.ok) throw new Error('Search failed')
             const data = await res.json()
 
